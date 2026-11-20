@@ -4,6 +4,12 @@ import { cva, type VariantProps } from "class-variance-authority"
 import Link from "next/link"
 import { useRef, type ComponentProps, type MouseEvent } from "react"
 
+import {
+  clickOrigin,
+  shouldTransition,
+  TransitionLink,
+  usePageTransition,
+} from "@/components/transition/page-transition"
 import { cn } from "@/lib/utils"
 
 /*
@@ -114,21 +120,33 @@ export function Button({
   )
 }
 
+/**
+ * Link styled as a button. Internal links go through the page transition
+ * (shutter from the click point); same-page anchors scroll smoothly.
+ */
 export function ButtonLink({
   className,
   variant,
   size,
   onClick,
+  href,
+  transitionLabel,
   ...props
-}: ComponentProps<typeof Link> & Variants) {
+}: ComponentProps<typeof Link> & Variants & { transitionLabel?: string }) {
   const { ref, blink } = useShutter<HTMLAnchorElement>()
+  const navigate = usePageTransition()
+  const path = typeof href === "string" ? href : (href.pathname ?? "/")
   return (
     <Link
       ref={ref}
+      href={href}
       className={cn(buttonVariants({ variant, size }), className)}
       onClick={(e) => {
         blink()
         onClick?.(e)
+        if (!navigate || !shouldTransition(e, path)) return
+        e.preventDefault()
+        navigate(path, clickOrigin(e), transitionLabel)
       }}
       {...props}
     />
@@ -136,9 +154,9 @@ export function ButtonLink({
 }
 
 /** Inline text link with an underline that draws in from the left. */
-export function TextLink({ className, children, ...props }: ComponentProps<typeof Link>) {
+export function TextLink({ className, children, ...props }: ComponentProps<typeof TransitionLink>) {
   return (
-    <Link
+    <TransitionLink
       className={cn(
         "group/link relative inline-flex items-center gap-1.5 font-semibold whitespace-nowrap text-safelight-text",
         className
@@ -153,6 +171,6 @@ export function TextLink({ className, children, ...props }: ComponentProps<typeo
         />
       </span>
       <ButtonArrow />
-    </Link>
+    </TransitionLink>
   )
 }

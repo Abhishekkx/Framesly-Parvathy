@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Bricolage_Grotesque, Figtree, JetBrains_Mono } from "next/font/google"
 
 import { MotionProvider } from "@/components/motion/motion-provider"
+import { PageTransitionProvider } from "@/components/transition/page-transition"
 import { siteConfig } from "@/lib/site"
 import "./globals.css"
 
@@ -46,7 +47,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${bricolage.variable} ${figtree.variable} ${jetbrainsMono.variable}`}
     >
       <body className="flex min-h-dvh flex-col">
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          <PageTransitionProvider>{children}</PageTransitionProvider>
+        </MotionProvider>
       </body>
     </html>
   )

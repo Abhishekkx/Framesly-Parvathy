@@ -1,11 +1,11 @@
 "use client"
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Wordmark } from "@/components/site/wordmark"
+import { TransitionLink as Link } from "@/components/transition/page-transition"
 import { ButtonLink, buttonVariants } from "@/components/ui/button"
 import { marketingNav } from "@/lib/site"
 import { cn } from "@/lib/utils"
@@ -138,7 +138,7 @@ export function SiteHeader() {
                   transition={{ delay: 0.12 + i * 0.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   className="border-b border-line"
                 >
-                  <Link href={item.href} className="flex items-baseline justify-between py-4">
+                  <Link href={item.href} onClick={() => setOpen(false)} className="flex items-baseline justify-between py-4">
                     <span className="type-heading-1">{item.label}</span>
                     <span className="type-label text-ink-muted">{String(i + 1).padStart(2, "0")}</span>
                   </Link>
@@ -146,7 +146,7 @@ export function SiteHeader() {
               ))}
             </nav>
             <div className="gutter pt-4 pb-[max(24px,env(safe-area-inset-bottom))]">
-              <ButtonLink href="/signup" size="lg" className="w-full">
+              <ButtonLink href="/signup" size="lg" className="w-full" onClick={() => setOpen(false)}>
                 Start free
               </ButtonLink>
             </div>

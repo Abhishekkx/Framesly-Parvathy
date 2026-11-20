@@ -311,6 +311,25 @@
   box-shadow: var(--shadow-print);
 }
 
+/*
+ * Page transition: while the shutter lifts (see components/transition), the
+ * new page rises into place. Duration matches the curtain; no forwards fill,
+ * so nothing keeps a transform (which would break position: fixed children).
+ */
+@keyframes page-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 56px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+body[data-revealing="true"] > :not([data-pt-overlay]) {
+  animation: page-rise 0.75s var(--ease-develop) backwards;
+}
+
 /* Pause CSS animations in sections that are off screen (set by JS). */
 [data-offscreen="true"] * {
   animation-play-state: paused !important;

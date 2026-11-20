@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { TransitionLink as Link } from "@/components/transition/page-transition"
 
 import { Wordmark } from "@/components/site/wordmark"
 

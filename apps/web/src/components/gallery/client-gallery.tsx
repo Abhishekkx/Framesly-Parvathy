@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react"
 import Image from "next/image"
-import Link from "next/link"
+import { TransitionLink as Link } from "@/components/transition/page-transition"
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react"
 
 import { allSamplePhotos, sampleGallery, type GalleryPhoto } from "@/components/gallery/gallery-data"
