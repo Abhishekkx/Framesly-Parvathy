@@ -32,7 +32,11 @@ export const buttonVariants = cva(
       variant: {
         primary: [
           "bg-safelight text-on-safelight before:bg-[rgb(0_0_0/0.22)]",
-          "hover:bg-[color-mix(in_oklab,var(--safelight)_88%,white)]",
+          "hover:bg-[color-mix(in_oklab,var(--safelight)_88%,black)]",
+        ],
+        ink: [
+          "bg-ink text-surface before:bg-[rgb(255_255_255/0.18)]",
+          "hover:bg-[color-mix(in_oklab,var(--ink)_86%,var(--safelight))]",
         ],
         secondary: [
           "border border-line-strong bg-transparent text-ink before:bg-safelight-soft",

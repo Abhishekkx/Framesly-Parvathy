@@ -7,10 +7,12 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react"
+import Image from "next/image"
 import { useRef } from "react"
 
 import { RevealText } from "@/components/motion/reveal"
 import { EdgeLabel } from "@/components/ui/card"
+import { photos } from "@/lib/photos"
 
 const tools = [
   { name: "Culling app", note: "Desktop only", x: -1, y: -1 },
@@ -72,7 +74,7 @@ function Diagram({ progress }: { progress: MotionValue<number> }) {
   const linesOpacity = useTransform(progress, [0, 0.35], [1, 0])
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[min(520px,46dvh)]" aria-hidden>
+    <div className="relative mx-auto aspect-square w-full max-w-[min(520px,46dvh)] lg:max-w-[min(540px,60dvh)]" aria-hidden>
       {/* Dashed re-upload lines between the four tools */}
       <motion.svg style={{ opacity: linesOpacity }} viewBox="0 0 100 100" className="absolute inset-0 size-full text-line-strong">
         <path d="M28 25 H72 M75 28 V72 M72 75 H28 M25 72 V28" stroke="currentColor" strokeWidth="0.35" strokeDasharray="1.4 1.4" fill="none" />
@@ -85,7 +87,7 @@ function Diagram({ progress }: { progress: MotionValue<number> }) {
       {/* The single file they collapse into */}
       <motion.div
         style={{ opacity: mergedOpacity, scale: mergedScale }}
-        className="absolute inset-[22%] flex flex-col justify-between border-2 border-safelight bg-surface-raised p-5"
+        className="theme-maroon absolute inset-[22%] flex flex-col justify-between rounded-[var(--radius-cover)] border-2 border-safelight p-5 shadow-[var(--shadow-print)]"
       >
         <span className="type-label text-safelight-text">One file in storage</span>
         <div>
@@ -128,12 +130,18 @@ function ToolBox({
   return (
     <motion.div
       style={{ x, y, opacity, rotate }}
-      className={`absolute ${pos} flex aspect-square w-[42%] flex-col justify-between border border-line bg-surface-raised p-4`}
+      className={`absolute ${pos} flex aspect-square w-[42%] flex-col overflow-hidden rounded-[var(--radius-control)] border border-line bg-surface-raised shadow-[var(--shadow-print)] will-change-transform`}
     >
-      <span className="type-label text-ink-muted">{String(index + 1).padStart(2, "0")}</span>
-      <div>
-        <p className="type-heading-2">{tool.name}</p>
-        <p className="mt-1 type-caption text-ink-muted">{tool.note}</p>
+      {/* The same photo, copied into every tool */}
+      <div className="relative min-h-0 flex-1">
+        <Image src={photos.riverRock.src} alt="" fill sizes="220px" className="object-cover object-[50%_35%]" />
+        <span className="absolute top-2 left-2 rounded-[var(--radius-chip)] bg-[rgb(var(--scrim)/0.7)] px-1.5 py-0.5 type-label text-[9px] text-[#f3ece3]">
+          Copy {index + 1}
+        </span>
+      </div>
+      <div className="p-3 sm:p-4">
+        <p className="type-caption font-semibold text-ink">{tool.name}</p>
+        <p className="type-label text-[10px] text-ink-muted">{tool.note}</p>
       </div>
     </motion.div>
   )

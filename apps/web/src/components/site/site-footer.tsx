@@ -30,7 +30,7 @@ const columns = [
 
 export function SiteFooter() {
   return (
-    <footer className="grain overflow-hidden border-t border-line bg-surface-sunken">
+    <footer className="theme-maroon grain overflow-hidden">
       <div className="gutter mx-auto max-w-[var(--container-content)] pt-16">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">

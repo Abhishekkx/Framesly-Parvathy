@@ -2,11 +2,12 @@ import type { Metadata } from "next"
 
 import { FaqList, landingFaqs } from "@/components/landing/faq"
 import { FinalCta } from "@/components/landing/final-cta"
-import { Hero } from "@/components/landing/hero"
-import { HowItWorks } from "@/components/landing/how-it-works"
-import { LightsOn } from "@/components/landing/lights-on"
+import { GalleryTrack } from "@/components/landing/gallery-track"
+import { HeroScatter } from "@/components/landing/hero-scatter"
 import { OneUpload } from "@/components/landing/one-upload"
+import { PhotoRibbon } from "@/components/landing/photo-ribbon"
 import { Proof } from "@/components/landing/proof"
+import { StepStack } from "@/components/landing/step-stack"
 import { VideoTeaser } from "@/components/landing/video-teaser"
 import { RevealText } from "@/components/motion/reveal"
 import { PlanTickets } from "@/components/pricing/plan-tickets"
@@ -20,11 +21,12 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <>
-      <Hero />
+      <HeroScatter />
+      <PhotoRibbon />
       <Proof />
       <OneUpload />
-      <HowItWorks />
-      <LightsOn />
+      <StepStack />
+      <GalleryTrack />
       <VideoTeaser />
 
       <section id="pricing" aria-labelledby="pricing-title" className="border-t border-line py-24 md:py-32">
