@@ -1,0 +1,242 @@
+@import "tailwindcss";
+
+/* ===========================================================================
+   Framesly · Darkroom design system
+   Darkroom (dark) is the default on :root. Print (light) is the alternate and
+   can be applied to the whole page or a single section with `.theme-print`.
+   Token values come from the Framesly Developer Brief.
+   =========================================================================== */
+
+:root,
+.theme-darkroom {
+  --surface: #121417;
+  --surface-raised: #1c2026;
+  --surface-sunken: #0b0d10;
+  --line: #2c333e;
+  --line-strong: #6b7482;
+  --ink: #e9ecf1;
+  --ink-muted: #98a0ad;
+  --safelight: #f2a93b;
+  --safelight-text: #f5bb62;
+  --safelight-soft: #3a2a10;
+  --on-safelight: #16191f;
+  --success: #6cc4d9;
+  --danger: #ff8a7a;
+  --scrim: 11 13 16;
+  color-scheme: dark;
+}
+
+.theme-print {
+  --surface: #f5f3ef;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e9e6e0;
+  --line: #d6d1c8;
+  --line-strong: #8f877b;
+  --ink: #16191f;
+  --ink-muted: #5a606b;
+  --safelight: #d18200;
+  --safelight-text: #8f5200;
+  --safelight-soft: #fbe7c6;
+  --on-safelight: #16191f;
+  --success: #1d6a80;
+  --danger: #b3261e;
+  --scrim: 22 25 31;
+  color-scheme: light;
+}
+
+/* Sections that switch theme must repaint their own background and text. */
+.theme-print,
+.theme-darkroom {
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-safelight: var(--safelight);
+  --color-safelight-text: var(--safelight-text);
+  --color-safelight-soft: var(--safelight-soft);
+  --color-on-safelight: var(--on-safelight);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Radius: 6 chips/inputs, 10 buttons/cards, 16 covers/modals, 999 badges */
+  --radius-chip: 6px;
+  --radius-control: 10px;
+  --radius-cover: 16px;
+
+  --container-content: 1200px;
+
+  --ease-shutter: cubic-bezier(0.7, 0, 0.2, 1);
+  --ease-develop: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Type scale (brief). Responsive variants work: `type-display-l md:type-display-xl`.
+   --------------------------------------------------------------------------- */
+@utility type-display-xl {
+  font-family: var(--font-heading);
+  font-size: 72px;
+  line-height: 72px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+@utility type-display-l {
+  font-family: var(--font-heading);
+  font-size: 48px;
+  line-height: 52px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+@utility type-heading-1 {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  line-height: 38px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+@utility type-heading-2 {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+@utility type-body-l {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 400;
+}
+@utility type-body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 400;
+}
+@utility type-caption {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+}
+@utility type-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+@utility type-metric {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Page gutter: 16px on phones, growing with the viewport. */
+@utility gutter {
+  padding-inline: 16px;
+  @media (width >= 40rem) {
+    padding-inline: 24px;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 32px;
+  }
+}
+
+/* Film grain for darkroom surfaces. Static, so it costs nothing to scroll. */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 80px;
+  }
+  body {
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 24px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--safelight);
+    color: var(--on-safelight);
+  }
+  /* Focus ring: 2px solid --safelight-text, 2px offset. */
+  :focus-visible {
+    outline: 2px solid var(--safelight-text);
+    outline-offset: 2px;
+  }
+  img {
+    -webkit-user-drag: none;
+  }
+}
+
+/* Shutter blink: the click feedback for buttons (see components/ui/button). */
+/* Tailwind v4 scale utilities use the `scale` property, so animate that. */
+@keyframes shutter {
+  0% {
+    scale: 1 0;
+  }
+  45% {
+    scale: 1 1;
+  }
+  100% {
+    scale: 1 0;
+  }
+}
+
+@keyframes marquee-left {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Respect prefers-reduced-motion everywhere. Motion components also read it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
