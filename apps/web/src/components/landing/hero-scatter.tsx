@@ -208,7 +208,7 @@ export function HeroScatter() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(900px 520px at 50% 46%, #fffaf1 0%, rgb(255 250 241 / 0) 70%), radial-gradient(600px 400px at 12% 0%, rgb(209 130 0 / 0.10), transparent 70%)",
+              "radial-gradient(900px 520px at 50% 46%, var(--hero-glow) 0%, transparent 70%), radial-gradient(600px 400px at 12% 0%, rgb(209 130 0 / 0.10), transparent 70%)",
           }}
         />
 
@@ -249,7 +249,7 @@ export function HeroScatter() {
             <div
               aria-hidden
               className="absolute -inset-x-16 -inset-y-12 -z-10 rounded-full sm:-inset-x-24"
-              style={{ background: "radial-gradient(closest-side, var(--surface) 55%, rgb(244 239 230 / 0))" }}
+              style={{ background: "radial-gradient(closest-side, var(--surface) 55%, transparent)" }}
             />
             <div className="flex items-center justify-center gap-3">
               <span className="relative flex size-2">

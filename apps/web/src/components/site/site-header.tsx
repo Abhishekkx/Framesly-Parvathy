@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { Wordmark } from "@/components/site/wordmark"
+import { ThemeSwitch } from "@/components/theme/theme"
 import { TransitionLink as Link } from "@/components/transition/page-transition"
 import { ButtonLink, buttonVariants } from "@/components/ui/button"
 import { marketingNav } from "@/lib/site"
@@ -77,6 +78,7 @@ export function SiteHeader() {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
+            <ThemeSwitch id="header" className="hidden md:inline-flex" />
             <Link
               href="/login"
               className="hidden h-11 items-center rounded-[var(--radius-chip)] px-3 type-caption text-ink-muted transition-colors hover:text-ink sm:flex"
@@ -145,7 +147,8 @@ export function SiteHeader() {
                 </motion.div>
               ))}
             </nav>
-            <div className="gutter pt-4 pb-[max(24px,env(safe-area-inset-bottom))]">
+            <div className="gutter space-y-3 pt-4 pb-[max(24px,env(safe-area-inset-bottom))]">
+              <ThemeSwitch id="mobile" labels className="flex w-full" />
               <ButtonLink href="/signup" size="lg" className="w-full" onClick={() => setOpen(false)}>
                 Start free
               </ButtonLink>

@@ -1,5 +1,6 @@
 import { AuthShowcase } from "@/components/auth/auth-showcase"
 import { Wordmark } from "@/components/site/wordmark"
+import { ThemeSwitch } from "@/components/theme/theme"
 import { TransitionLink } from "@/components/transition/page-transition"
 
 /** Split layout: the form on the left, a live slideshow of culled picks on the right (desktop). */
@@ -13,9 +14,12 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           className="pointer-events-none absolute -top-48 -left-40 size-[620px] rounded-full"
           style={{ background: "radial-gradient(closest-side, rgb(209 130 0 / 0.12), transparent)" }}
         />
-        <TransitionLink href="/" aria-label="Framesly home" className="relative self-start">
-          <Wordmark />
-        </TransitionLink>
+        <div className="relative flex items-center justify-between gap-4">
+          <TransitionLink href="/" aria-label="Framesly home">
+            <Wordmark />
+          </TransitionLink>
+          <ThemeSwitch id="auth" />
+        </div>
         <main className="relative flex flex-1 items-center py-10">{children}</main>
         <p className="relative type-label text-ink-muted">© 2026 Framesly</p>
       </div>

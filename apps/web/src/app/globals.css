@@ -3,10 +3,14 @@
 /* ===========================================================================
    Framesly · design tokens
 
-   The marketing site runs on warm, light palettes; the darkroom is a moment,
-   not the whole page.
+   Brand decision (Nov 21): the public site is light by default; the app
+   after login (/app) is Darkroom by default. Visitors can switch either way
+   with the theme switch, and the choice is remembered.
 
-   - :root            Ivory: warm print paper, marigold safelight. Default.
+   - :root                     Ivory: warm print paper, marigold safelight.
+   - html[data-theme="dark"]   Darkroom across the page (brief values).
+     (set before first paint by the script in app/layout.tsx)
+   - .theme-ivory              Force ivory on one section (e.g. "lights on").
    - .theme-espresso  Warm dark for one or two contrast bands.
    - .theme-maroon    Bridal maroon for accent cards and the footer.
    - .theme-darkroom  The brief's Darkroom values (dashboard, lightbox).
@@ -34,13 +38,41 @@
   --scrim: 28 23 20;
   --print-border: #fffcf7;
   --shadow-print: 0 22px 44px -22px rgb(60 40 20 / 0.45), 0 2px 6px rgb(60 40 20 / 0.08);
+  --hero-glow: #fffaf1;
   color-scheme: light;
 }
 
-.theme-espresso,
-.theme-maroon,
+/* Darkroom for the whole page: the brief's dark-first palette. */
+html[data-theme="dark"],
 .theme-darkroom {
+  --surface: #121417;
+  --surface-raised: #1c2026;
+  --surface-sunken: #0b0d10;
+  --line: #2c333e;
+  --line-strong: #6b7482;
+  --ink: #e9ecf1;
+  --ink-muted: #98a0ad;
+  --safelight: #f2a93b;
+  --safelight-text: #f5bb62;
+  --safelight-soft: #3a2a10;
+  --on-safelight: #16191f;
+  --success: #6cc4d9;
+  --danger: #ff8a7a;
+  --scrim: 11 13 16;
+  --print-border: #e9ecf1;
+  --shadow-print: 0 24px 50px -24px rgb(0 0 0 / 0.75);
+  --hero-glow: rgb(242 169 59 / 0.07);
   --grain-opacity: 0.05;
+  color-scheme: dark;
+}
+
+.theme-espresso,
+.theme-maroon {
+  --grain-opacity: 0.05;
+}
+.theme-ivory {
+  --grain-opacity: 0.035;
+  --hero-glow: #fffaf1;
 }
 
 .theme-espresso {
@@ -80,24 +112,6 @@
   --scrim: 40 10 16;
   --print-border: #f7eadf;
   --shadow-print: 0 24px 50px -24px rgb(20 0 5 / 0.7);
-  color-scheme: dark;
-}
-
-.theme-darkroom {
-  --surface: #121417;
-  --surface-raised: #1c2026;
-  --surface-sunken: #0b0d10;
-  --line: #2c333e;
-  --line-strong: #6b7482;
-  --ink: #e9ecf1;
-  --ink-muted: #98a0ad;
-  --safelight: #f2a93b;
-  --safelight-text: #f5bb62;
-  --safelight-soft: #3a2a10;
-  --on-safelight: #16191f;
-  --success: #6cc4d9;
-  --danger: #ff8a7a;
-  --scrim: 11 13 16;
   color-scheme: dark;
 }
 
@@ -355,6 +369,27 @@
 }
 body[data-revealing="true"] > :not([data-pt-overlay]) {
   animation: page-rise 0.75s var(--ease-develop) backwards;
+}
+
+/*
+ * Theme switch: the new theme spreads out from the switch as a circle
+ * (View Transitions API; browsers without it switch instantly).
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-theme-switching]::view-transition-new(root) {
+  animation: theme-reveal 0.65s var(--ease-shutter) both;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0px at var(--tx, 50%) var(--ty, 0px));
+  }
+  to {
+    clip-path: circle(150vmax at var(--tx, 50%) var(--ty, 0px));
+  }
 }
 
 /* Pause CSS animations in sections that are off screen (set by JS). */

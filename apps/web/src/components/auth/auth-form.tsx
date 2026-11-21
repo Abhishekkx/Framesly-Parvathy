@@ -116,9 +116,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             <p className="mt-3 type-body-l text-ink-muted">
               We sent a sign-in link to <span className="text-ink">{email}</span>. It works for 15 minutes.
             </p>
-            <Button variant="secondary" className="mt-8" onClick={() => setStatus("idle")}>
-              Use a different email
-            </Button>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button variant="secondary" onClick={() => setStatus("idle")}>
+                Use a different email
+              </Button>
+              {/* Until Supabase Auth is wired up (FR-03), this previews where a signed-in photographer lands. */}
+              <Link href="/app" className="type-caption font-semibold text-safelight-text underline-offset-4 hover:underline">
+                Preview the dashboard
+              </Link>
+            </div>
           </motion.div>
         ) : (
           <motion.div key="form" variants={stagger} initial="hidden" animate="show" exit={{ opacity: 0, y: -12, transition: { duration: 0.3 } }}>

@@ -49,7 +49,7 @@ export function FinalCta() {
         <PrintRow items={rowA} picks={[0, 2, 5, 7]} progress={scrollYProgress} from={reduce ? "-10%" : "0%"} to={reduce ? "-10%" : "-30%"} />
         <PrintRow items={rowB} picks={[1, 4, 6]} progress={scrollYProgress} from={reduce ? "-20%" : "-35%"} to={reduce ? "-20%" : "-5%"} />
       </div>
-      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_55%_60%_at_center,var(--surface)_45%,rgb(244_239_230/0)_100%)]" />
+      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_55%_60%_at_center,var(--surface)_45%,transparent_100%)]" />
 
       <div className="gutter relative mx-auto flex max-w-[var(--container-content)] flex-col items-center text-center">
         <EdgeLabel tone="safelight">Ready when your next wedding is</EdgeLabel>
