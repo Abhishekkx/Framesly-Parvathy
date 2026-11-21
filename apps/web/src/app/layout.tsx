@@ -32,12 +32,13 @@ export const metadata: Metadata = {
     template: "%s · Framesly",
   },
   description: siteConfig.description,
-  openGraph: { type: "website", siteName: siteConfig.name, url: siteConfig.url },
+  openGraph: { type: "website", siteName: siteConfig.name },
+  twitter: { card: "summary_large_image" },
 }
 
 export const viewport: Viewport = {
   themeColor: "#f4efe6",
-  colorScheme: "dark light",
+  colorScheme: "light",
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

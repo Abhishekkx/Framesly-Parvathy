@@ -165,7 +165,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 <motion.div variants={item}>
                   <Field
                     label="Studio name"
-                    placeholder="Saffron Lane"
+                    name="studio"
+                    placeholder="Saffron Lane…"
                     value={studio}
                     onChange={(e) => setStudio(e.target.value)}
                     required
@@ -188,7 +189,9 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                   type="email"
                   inputMode="email"
                   autoComplete="email"
-                  placeholder="you@studio.com"
+                  name="email"
+                  spellCheck={false}
+                  placeholder="you@studio.com…"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -200,7 +203,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                     {status === "sending" ? (
                       <motion.span key="sending" className="flex items-center gap-2" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
                         <Aperture />
-                        Sending your link
+                        Sending your link…
                       </motion.span>
                     ) : (
                       <motion.span key="idle" className="flex items-center gap-2" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>

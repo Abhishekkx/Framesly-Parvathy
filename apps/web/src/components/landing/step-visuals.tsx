@@ -1,8 +1,8 @@
 "use client"
 
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Chip } from "@/components/ui/card"
 import { Viewfinder } from "@/components/ui/viewfinder"
@@ -36,39 +36,39 @@ const files = [
 ]
 
 export function UploadVisual() {
+  // Looping bars are CSS transforms (compositor only) and pause off screen.
+  // They used to animate `width`, which forced layout every frame.
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { margin: "100px 0px" })
+  const reduce = useReducedMotion()
   return (
-    <Panel
-      title="Uploading · Day 2"
-      meta={<span className="type-metric text-ink">1,402<span className="text-ink-muted"> / 2,184</span></span>}
-    >
-      <ul className="divide-y divide-line">
-        {files.map((f, i) => (
-          <li key={f.name} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 px-4 py-3">
-            <span className="type-metric text-ink">{f.name}</span>
-            <span className="type-label text-ink-muted">{f.size}</span>
-            <div className="col-span-2 h-1 bg-surface-sunken">
-              <motion.div
-                className={cn("h-full", f.dropped ? "bg-safelight" : "bg-ink-muted")}
-                initial={{ width: "0%" }}
-                animate={{ width: f.dropped ? ["0%", "46%", "46%", "100%"] : ["0%", "100%"] }}
-                transition={{
-                  duration: f.dropped ? 3.6 : f.d,
-                  times: f.dropped ? [0, 0.35, 0.6, 1] : undefined,
-                  ease: "easeInOut",
-                  repeat: Infinity,
-                  repeatDelay: 1.2,
-                  delay: i * 0.15,
-                }}
-              />
-            </div>
-            {f.dropped && <DropStatus delayMs={i * 150} />}
-          </li>
-        ))}
-      </ul>
-      <div className="flex items-center justify-between gap-3 border-t border-line bg-surface-sunken px-4 py-3">
-        <p className="type-caption text-ink-muted">Straight to storage. Resumes after a dropped connection.</p>
-      </div>
-    </Panel>
+    <div ref={ref} data-offscreen={!inView}>
+      <Panel
+        title="Uploading · Day 2"
+        meta={<span className="type-metric text-ink">1,402<span className="text-ink-muted"> / 2,184</span></span>}
+      >
+        <ul className="divide-y divide-line">
+          {files.map((f, i) => (
+            <li key={f.name} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-2 px-4 py-3">
+              <span className="type-metric text-ink">{f.name}</span>
+              <span className="type-label text-ink-muted">{f.size}</span>
+              <div className="col-span-2 h-1 overflow-hidden bg-surface-sunken">
+                <div
+                  className={cn("h-full origin-left", f.dropped ? "bg-safelight" : "bg-ink-muted")}
+                  style={{
+                    animation: `${f.dropped ? "upload-drop 4.8s" : `upload-fill ${(f.d + 1.2).toFixed(1)}s`} ease-in-out ${i * 0.15}s infinite both`,
+                  }}
+                />
+              </div>
+              {f.dropped && <DropStatus delayMs={i * 150} active={inView && !reduce} />}
+            </li>
+          ))}
+        </ul>
+        <div className="flex items-center justify-between gap-3 border-t border-line bg-surface-sunken px-4 py-3">
+          <p className="type-caption text-ink-muted">Straight to storage. Resumes after a dropped connection.</p>
+        </div>
+      </Panel>
+    </div>
   )
 }
 
@@ -80,9 +80,10 @@ const dropStates = [
   { at: 3700, label: "Uploaded", tone: "text-success" },
 ] as const
 
-function DropStatus({ delayMs }: { delayMs: number }) {
+function DropStatus({ delayMs, active }: { delayMs: number; active: boolean }) {
   const [state, setState] = useState(0)
   useEffect(() => {
+    if (!active) return
     const timers: ReturnType<typeof setTimeout>[] = []
     const cycle = () => {
       dropStates.forEach((s, i) => timers.push(setTimeout(() => setState(i), s.at)))
@@ -99,7 +100,7 @@ function DropStatus({ delayMs }: { delayMs: number }) {
         clearInterval(t)
       })
     }
-  }, [delayMs])
+  }, [delayMs, active])
   const s = dropStates[state]
   return (
     <p className={cn("col-span-2 type-label transition-colors", s.tone)} aria-live="off">
@@ -119,7 +120,8 @@ const thumbs = [
 ]
 
 export function CullVisual() {
-  const [n, setN] = useState(600)
+  // One example wedding everywhere: 2,184 frames, 612 picks, 41 minutes (fix list).
+  const [n, setN] = useState(612)
   const total = 2184
   const picksShown = Math.round((n / total) * thumbs.length * 1.9)
   const step = (d: number) => setN((v) => Math.min(1200, Math.max(200, v + d)))
@@ -185,9 +187,10 @@ export function CullVisual() {
       </ol>
 
       <div className="flex flex-wrap gap-2 border-t border-line bg-surface-sunken px-4 py-3">
+        {/* Rejects always add up: 2,184 − picks. At 612 picks: 214 + 96 + 1,262 = 1,572. */}
         <Chip>Blur 214</Chip>
         <Chip>Eyes closed 96</Chip>
-        <Chip>Duplicates 1,262</Chip>
+        <Chip>Duplicates {(total - n - 214 - 96).toLocaleString("en-US")}</Chip>
       </div>
     </Panel>
   )
@@ -198,14 +201,15 @@ export function CullVisual() {
 /* -------------------------------------------------------------------------- */
 
 export function DeliverVisual() {
-  const grid = [photos.sherwani, photos.brideRed, photos.canopy, photos.riverRock, photos.attire, photos.ritual]
+  const grid = [photos.sherwani, photos.treeEmbrace, photos.canopy, photos.qipao, photos.attire, photos.confettiSteps]
   return (
-    <div className="relative mx-auto flex max-w-[420px] justify-center pt-6 pb-10">
+    <div className="relative mx-auto flex max-w-[420px] justify-center pt-20 pb-10" aria-label="Sample client gallery on a phone, with a delivery email" role="img">
       {/* Phone */}
       <div className="relative w-[248px] overflow-hidden rounded-[34px] border border-line-strong bg-surface-sunken p-2 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.7)]">
         <div className="theme-print overflow-hidden rounded-[26px]">
           <div className="relative h-[220px]">
             <Image src={photos.flowerCanopy.src} alt="" fill sizes="240px" className="object-cover" />
+            <span className="absolute top-3 right-3 rounded-full bg-white/85 px-2 py-0.5 type-label text-[8px] text-[#16191f]">Sample</span>
             <div className="absolute inset-0 bg-gradient-to-t from-[rgb(22_25_31/0.75)] via-transparent to-[rgb(22_25_31/0.35)]" />
             <p className="absolute top-3 left-3 font-heading text-[11px] font-bold tracking-[0.2em] text-white uppercase">Saffron Lane</p>
             <div className="absolute inset-x-3 bottom-3 text-white">
@@ -230,7 +234,7 @@ export function DeliverVisual() {
 
       {/* Delivery email notification */}
       <motion.div
-        className="absolute top-0 -right-2 w-[230px] rounded-[var(--radius-control)] border border-line bg-surface-raised p-3 sm:-right-10"
+        className="absolute top-0 right-0 w-[230px] rounded-[var(--radius-control)] border border-line bg-surface-raised p-3 shadow-[var(--shadow-print)]"
         initial={{ opacity: 0, x: 24, y: 8 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         transition={{ delay: 0.5, duration: 0.6, ease: develop }}
@@ -241,7 +245,7 @@ export function DeliverVisual() {
       </motion.div>
 
       <motion.div
-        className="absolute bottom-2 -left-2 sm:-left-8"
+        className="absolute bottom-2 left-0"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, duration: 0.6, ease: develop }}

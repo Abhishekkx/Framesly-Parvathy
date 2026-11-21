@@ -12,10 +12,11 @@ import { photos } from "@/lib/photos"
 const reel = [
   { p: photos.archway, t: "00:12", label: "Arrival" },
   { p: photos.dancingNight, t: "01:48", label: "Sangeet" },
+  { p: photos.aisle, t: "03:10", label: "The aisle" },
   { p: photos.canopy, t: "04:05", label: "Pheras" },
-  { p: photos.hill, t: "05:31", label: "Portraits" },
+  { p: photos.stageDance, t: "06:02", label: "First dance" },
   { p: photos.toast, t: "07:22", label: "Toasts" },
-  { p: photos.dancefloor, t: "08:40", label: "First dance" },
+  { p: photos.sparklers, t: "09:14", label: "Sparkler exit" },
   { p: photos.sunsetKiss, t: "10:02", label: "Send-off" },
 ]
 
@@ -46,13 +47,13 @@ export function VideoTeaser({ showLink = true }: { showLink?: boolean }) {
         </div>
       </div>
 
-      <div className="mt-16 border-y border-line bg-surface-sunken py-3" aria-hidden>
+      <div className="mt-16 border-y border-line bg-surface-sunken py-3">
         <Sprockets />
         <motion.ol style={{ x }} className="flex gap-3 py-3 pl-4 will-change-transform">
           {reel.map((r) => (
             <li key={r.t} className="relative w-[260px] shrink-0 sm:w-[340px]">
               <div className="relative aspect-video overflow-hidden">
-                <Image src={r.p.src} alt="" fill sizes="340px" className="object-cover" />
+                <Image src={r.p.src} alt={`Film chapter at ${r.t}: ${r.label}. ${r.p.alt}`} fill sizes="340px" className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[rgb(11_13_16/0.7)] to-transparent" />
                 <span className="absolute bottom-2 left-2 rounded-[var(--radius-chip)] bg-[rgb(11_13_16/0.7)] px-2 py-0.5 type-metric text-[12px] text-[#e9ecf1]">
                   {r.t}
@@ -71,6 +72,7 @@ export function VideoTeaser({ showLink = true }: { showLink?: boolean }) {
 function Sprockets() {
   return (
     <div
+      aria-hidden
       className="h-2.5"
       style={{
         backgroundImage: "radial-gradient(circle at center, var(--surface) 0 3px, transparent 3.5px)",

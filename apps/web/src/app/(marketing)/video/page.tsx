@@ -4,8 +4,10 @@ import { VideoTeaser } from "@/components/landing/video-teaser"
 import { RevealText } from "@/components/motion/reveal"
 import { ButtonLink } from "@/components/ui/button"
 import { Card, EdgeLabel } from "@/components/ui/card"
+import { pageMeta } from "@/lib/site"
 
 export const metadata: Metadata = {
+  ...pageMeta("/video"),
   title: "Video",
   description: "Wedding films next to the photos in one client gallery. Coming after the beta.",
 }

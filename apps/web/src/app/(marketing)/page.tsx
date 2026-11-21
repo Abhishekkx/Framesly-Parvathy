@@ -13,8 +13,10 @@ import { RevealText } from "@/components/motion/reveal"
 import { PlanTickets } from "@/components/pricing/plan-tickets"
 import { TextLink } from "@/components/ui/button"
 import { EdgeLabel } from "@/components/ui/card"
+import { pageMeta } from "@/lib/site"
 
 export const metadata: Metadata = {
+  ...pageMeta("/"),
   title: { absolute: "Framesly: cull a wedding before dinner" },
 }
 

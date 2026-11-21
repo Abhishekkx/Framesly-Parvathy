@@ -11,8 +11,8 @@ import { Viewfinder } from "@/components/ui/viewfinder"
 import { photos, type Photo } from "@/lib/photos"
 import { cn } from "@/lib/utils"
 
-const rowA = [photos.brideRed, photos.canopy, photos.riverRock, photos.hennaHands, photos.attire, photos.sherwani, photos.ritual, photos.woods, photos.traditional]
-const rowB = [photos.lifted, photos.firstDance, photos.toast, photos.dancer, photos.bouquet, photos.archway, photos.field, photos.mono, photos.dock]
+const rowA = [photos.brideRed, photos.treeEmbrace, photos.canopy, photos.agbada, photos.attire, photos.aisle, photos.qipao, photos.woods, photos.nikah]
+const rowB = [photos.sparklers, photos.firstDance, photos.palmGarden, photos.dancer, photos.sunsetVeil, photos.archway, photos.gardenKiss, photos.mono, photos.doubleHappiness]
 
 /** A row of prints that slides with the scroll; picks get brackets, rejects stay grey. */
 function PrintRow({ items, picks, progress, from, to }: { items: Photo[]; picks: number[]; progress: MotionValue<number>; from: string; to: string }) {

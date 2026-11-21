@@ -44,17 +44,17 @@ const prints: PrintDef[] = [
   { photo: photos.brideRed, frame: 408, pick: true, d: [-0.84, -0.42], m: [-0.82, -0.74], rotate: -7, depth: 1 },
   { photo: photos.hennaHands, frame: 409, pick: false, reason: "Blur", d: [-0.5, -0.66], m: [-0.3, -0.8], rotate: 5, depth: 0.5 },
   { photo: photos.canopy, frame: 410, pick: true, d: [0.52, -0.64], m: [0.22, -0.72], rotate: -4, depth: 0.8, crop: "50% 50%" },
-  { photo: photos.riverRock, frame: 412, pick: true, d: [0.86, -0.34], m: [0.78, -0.78], rotate: 8, depth: 1.2 },
+  { photo: photos.treeEmbrace, frame: 412, pick: true, d: [0.86, -0.34], m: [0.78, -0.78], rotate: 8, depth: 1.2 },
   { photo: photos.ritual, frame: 413, pick: false, reason: "Eyes closed", d: [0.62, 0.08], m: [0.5, -0.6], rotate: -3, depth: 0.6 },
-  { photo: photos.sherwani, frame: 416, pick: true, d: [0.84, 0.62], m: [0.84, 0.76], rotate: 6, depth: 1.1 },
+  { photo: photos.sparklers, frame: 416, pick: true, d: [0.84, 0.62], m: [0.84, 0.76], rotate: 6, depth: 1.1 },
   { photo: photos.rings, frame: 417, pick: false, reason: "Blur", d: [0.4, 0.84], m: [0.4, 0.86], rotate: -9, depth: 0.7 },
   { photo: photos.brideGold, frame: 414, pick: true, d: [-0.12, 0.9], m: [-0.06, 0.8], rotate: 3, depth: 0.9, crop: "50% 30%" },
   { photo: photos.crown, frame: 419, pick: false, reason: "Eyes closed", d: [-0.44, 0.82], m: [-0.46, 0.88], rotate: 7, depth: 0.6 },
-  { photo: photos.flowerCanopy, frame: 418, pick: true, d: [-0.86, 0.48], m: [-0.84, 0.74], rotate: -5, depth: 1.2 },
+  { photo: photos.doubleHappiness, frame: 418, pick: true, d: [-0.86, 0.48], m: [-0.84, 0.74], rotate: -5, depth: 1.2, crop: "50% 60%" },
   { photo: photos.canopy, frame: 411, pick: false, reason: "Dup of 0410", d: [-0.64, 0.02], m: [-0.56, -0.58], rotate: 4, depth: 0.5, crop: "64% 40%" },
-  { photo: photos.traditional, frame: 421, pick: true, d: [0.18, -0.76], m: [0.56, 0.62], rotate: -2, depth: 0.7 },
-  { photo: photos.posing, frame: 422, pick: false, reason: "Dup of 0421", d: [-0.2, -0.78], m: [-0.62, 0.6], rotate: 9, depth: 0.4 },
-  { photo: photos.woods, frame: 425, pick: true, d: [0.4, 0.74], m: [0.1, 0.92], rotate: 5, depth: 0.9 },
+  { photo: photos.agbada, frame: 421, pick: true, d: [0.4, -0.86], m: [0.56, 0.62], rotate: -2, depth: 0.7, crop: "50% 40%" },
+  { photo: photos.agbada, frame: 422, pick: false, reason: "Dup of 0421", d: [-0.38, -0.9], m: [-0.62, 0.6], rotate: 9, depth: 0.4, crop: "40% 70%" },
+  { photo: photos.aisle, frame: 425, pick: true, d: [0.4, 0.74], m: [0.1, 0.92], rotate: 5, depth: 0.9, crop: "50% 60%" },
 ]
 
 const pickOrder = prints.filter((p) => p.pick)
@@ -92,7 +92,7 @@ function computeLayout(vw: number, vh: number): Layout {
   gw = Math.min(gw, (availH - gap * (rows - 1)) / rows / 1.25)
   const gh = gw * 1.25
   const gridH = rows * gh + gap * (rows - 1)
-  const looseW = mobile ? 88 : vw < 1024 ? 120 : Math.min(150, vw * 0.105)
+  const looseW = mobile ? 80 : vw < 1024 ? 120 : Math.min(150, vw * 0.105)
   return {
     vw,
     vh,
@@ -186,8 +186,6 @@ export function HeroScatter() {
   const capOpacity = useTransform(p, [0.42, 0.52], [0, 1])
   const capY = useTransform(p, [0.42, 0.52], [18, 0])
   const capVisibility = useTransform(p, (v) => (v < 0.4 ? "hidden" : "visible"))
-  const scored = useTransform(p, [0.04, 0.5], [0, 2184])
-  const scoredText = useTransform(scored, (v) => Math.round(v).toLocaleString("en-US"))
   const hintOpacity = useTransform(p, [0, 0.04], [1, 0])
 
   // Idle drift only while the scene is at rest.
@@ -299,7 +297,8 @@ export function HeroScatter() {
           className="absolute inset-x-0 top-20 z-20 px-4 text-center sm:top-24"
         >
           <EdgeLabel tone="safelight">
-            <motion.span>{scoredText}</motion.span> frames scored
+            {/* Static number: the server HTML never says "0 frames scored". */}
+            2,184 frames scored · example wedding
           </EdgeLabel>
           <p className="mx-auto mt-3 max-w-xl type-heading-1 text-balance sm:type-display-l">
             612 picks. 41 minutes.
@@ -364,7 +363,10 @@ function PrintCard({
     const [nx, ny] = L.mobile ? def.m : def.d
     const halfW = (L.gw * L.looseScale) / 2
     const halfH = (L.gh * L.looseScale) / 2
-    return { x: nx * (L.vw / 2 - halfW * 0.6), y: ny * (L.vh / 2 - halfH * 0.55) }
+    // Never let a loose print sit under the fixed header (fix list: photos
+    // covered the nav). Its top edge, allowing for tilt, stays below 76px.
+    const minY = -L.vh / 2 + 76 + halfH * 1.08
+    return { x: nx * (L.vw / 2 - halfW * 0.6), y: Math.max(minY, ny * (L.vh / 2 - halfH * 0.55)) }
   }
   const cell = () => {
     const L = layoutRef.current
@@ -436,7 +438,10 @@ function PrintCard({
               alt={def.photo.alt}
               fill
               sizes={`${Math.round(layout.gw)}px`}
-              priority
+              // Only the first few prints block first paint; the rest load right after.
+              priority={index < 6}
+              loading={index < 6 ? undefined : "eager"}
+              quality={60}
               className="object-cover"
               style={{ objectPosition: def.crop }}
             />

@@ -53,11 +53,12 @@ export function Proof() {
             <div key={row.label} className="grid grid-cols-[88px_1fr] items-center gap-4 sm:grid-cols-[120px_1fr_120px]">
               <span className="type-label text-ink-muted">{row.label}</span>
               <div className="h-2 bg-surface-sunken">
+                {/* scaleX (compositor only) instead of animating width. */}
                 <motion.div
-                  className={`h-full ${row.tone}`}
-                  style={{ minWidth: 6 }}
-                  initial={{ width: 0 }}
-                  whileInView={{ width: row.width }}
+                  className={`h-full origin-left ${row.tone}`}
+                  style={{ width: row.width, minWidth: 6 }}
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
                   viewport={{ once: true, margin: "0px 0px -10% 0px" }}
                   transition={{ duration: i === 0 ? 1.8 : 0.6, ease: develop, delay: i === 0 ? 0.1 : 1.6 }}
                 />

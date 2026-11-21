@@ -253,6 +253,9 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* No double-tap zoom delay; tap highlight replaced by our own pressed states. */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     scroll-padding-top: 80px;
   }
   body {
@@ -301,6 +304,30 @@
   }
   50% {
     transform: translate3d(0, -10px, 0) rotate(0.8deg);
+  }
+}
+
+/* Upload progress loops (step 01 visual). scaleX only, so no layout work. */
+@keyframes upload-fill {
+  0% {
+    transform: scaleX(0);
+  }
+  75%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+@keyframes upload-drop {
+  0% {
+    transform: scaleX(0);
+  }
+  26%,
+  45% {
+    transform: scaleX(0.46);
+  }
+  75%,
+  100% {
+    transform: scaleX(1);
   }
 }
 

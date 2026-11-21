@@ -268,7 +268,10 @@ function Cover({ onShare, favCount, onShowFavs }: { onShare: () => void; favCoun
 
       {/* Photographer's logo top-left, never Framesly's */}
       <div className="absolute inset-x-0 top-0 flex items-center justify-between px-4 py-4 text-white sm:px-8 sm:py-6">
-        <p className="font-heading text-[14px] font-bold tracking-[0.3em] uppercase sm:text-[15px]">{g.studio.name}</p>
+        <div className="flex items-center gap-3">
+          <p className="font-heading text-[14px] font-bold tracking-[0.3em] uppercase sm:text-[15px]">{g.studio.name}</p>
+          <span className="rounded-full bg-white/85 px-2 py-0.5 type-label text-[10px] text-[#16191f]">Sample</span>
+        </div>
         <div className="flex items-center gap-1">
           <button type="button" onClick={onShowFavs} className="flex h-11 items-center gap-2 rounded-full px-3 type-caption text-white/90 transition-colors hover:bg-white/10">
             <svg viewBox="0 0 24 24" className="size-4" aria-hidden>

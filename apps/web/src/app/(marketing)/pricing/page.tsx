@@ -4,8 +4,10 @@ import { FaqList, type Faq } from "@/components/landing/faq"
 import { RevealText } from "@/components/motion/reveal"
 import { PlanTickets } from "@/components/pricing/plan-tickets"
 import { EdgeLabel } from "@/components/ui/card"
+import { pageMeta } from "@/lib/site"
 
 export const metadata: Metadata = {
+  ...pageMeta("/pricing"),
   title: "Pricing",
   description: "One price for culling, client galleries and delivery. Start with a free trial.",
 }

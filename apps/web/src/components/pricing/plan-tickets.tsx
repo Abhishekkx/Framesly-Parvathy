@@ -177,8 +177,16 @@ export function PlanTickets({ defaultCurrency = "USD" }: { defaultCurrency?: Cur
                     {plan.cta}
                     {rec && <ButtonArrow />}
                   </ButtonLink>
-                  {plan.monthly && (
+                  {plan.monthly ? (
                     <p className="mt-3 text-center type-label text-ink-muted">{TRIAL_DAYS}-day free trial</p>
+                  ) : (
+                    // mailto can fail silently with no mail app set up, so the address is also shown as text.
+                    <p className="mt-3 text-center type-caption font-normal text-ink-muted">
+                      or write to{" "}
+                      <a href="mailto:hello@framesly.app" className="font-semibold text-ink underline underline-offset-4 select-all">
+                        hello@framesly.app
+                      </a>
+                    </p>
                   )}
                 </div>
               </article>

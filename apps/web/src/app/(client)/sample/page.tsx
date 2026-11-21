@@ -4,9 +4,11 @@ import { ClientGallery } from "@/components/gallery/client-gallery"
 import { sampleGallery } from "@/components/gallery/gallery-data"
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/sample" },
   title: `${sampleGallery.couple} · Sample gallery`,
   description: "A sample Framesly client gallery: what couples see when you deliver.",
   openGraph: {
+    url: "/sample",
     title: `${sampleGallery.couple} · ${sampleGallery.studio.name}`,
     description: `${sampleGallery.place} · ${sampleGallery.dates}`,
     images: [{ url: `${sampleGallery.cover.src}?w=1200&h=630&fit=crop&auto=format`, width: 1200, height: 630 }],

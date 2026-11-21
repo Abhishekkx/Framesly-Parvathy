@@ -54,6 +54,24 @@ export const photos = {
   ringsSilver: photo("photo-1533091090875-1ff4acc497dd", 400, 267, "Couple wearing wedding rings", "odt2t81dZtQ"),
   dock: photo("photo-1563808599481-34a342e44508", 400, 600, "Couple standing on a dock", "mvasDnG41is"),
   dancefloor: photo("photo-1714972383570-44ddc9738355", 400, 267, "Couple on the dance floor", "0CklaCuehpc"),
+
+  // Weddings beyond South Asia, for the international positioning (fix list, Nov 21).
+  treeEmbrace: photo("photo-1695281536457-01f9a07c575b", 400, 599, "Bride and groom embracing under a flowering tree", "a-bride-and-groom-embracing-under-a-tree-OyhCn_7YoQo"),
+  gardenKiss: photo("photo-1695281535578-ce371088bb3e", 400, 504, "Groom kissing the bride's forehead in a garden", "a-bride-and-groom-pose-for-a-wedding-photo-YGZIxyRunvw"),
+  agbada: photo("photo-1790563378465-572d52edf0b1", 400, 600, "Couple in traditional Nigerian attire walking hand in hand", "man-and-woman-in-traditional-attire-EGZ06d__aMU"),
+  yoruba: photo("photo-1661332517932-2d441bfb2994", 400, 397, "Couple in traditional Yoruba wedding attire", "a-man-and-woman-wearing-traditional-clothing-nRrFmCS6vTE"),
+  palmGarden: photo("photo-1696076994764-a3f679d74d95", 400, 711, "Bride and groom in a palm garden", "a-woman-in-a-wedding-dress-standing-next-to-a-man-in-a-suit-APTSrpEncEk"),
+  sparklers: photo("photo-1728084529314-b077d656bd51", 400, 600, "Bride and groom in front of a firework display", "a-bride-and-groom-standing-in-front-of-a-firework-display-ZVZe-93Pwkw"),
+  sunsetVeil: photo("photo-1631664467333-16c1d3dd2c11", 400, 600, "Bride and groom laughing at sunset", "a-bride-and-groom-posing-for-a-picture-l91HPje8IjI"),
+  maroonGown: photo("photo-1792611962509-b85be536902a", 400, 267, "Bride in a maroon embroidered gown on a staircase", "woman-in-maroon-bridal-dress-j62roOYCmFE"),
+  confettiChurch: photo("photo-1758810411894-3c0f092f305f", 400, 267, "Newlyweds showered with confetti leaving a church", "newlyweds-showered-with-confetti-leaving-church-OT9a0PqS-j0"),
+  aisle: photo("photo-1779900253528-2ad774dffe88", 400, 601, "Bride walking down the aisle of a grand church", "a-bride-walks-down-the-aisle-in-a-grand-church-H8eSYN9AyEs"),
+  altar: photo("photo-1474867985807-96ca17098cc9", 400, 599, "Bride and groom kneeling at the altar", "groom-and-bride-kneeling-in-front-of-priest-raising-the-holy-sacrament-nKJzYDP10Zw"),
+  confettiSteps: photo("photo-1783031759822-a8e99b0dc368", 400, 267, "Couple celebrating with confetti outside a church", "wedding-couple-celebrates-with-confetti-outside-church-3UFqNpaiTcI"),
+  doubleHappiness: photo("photo-1784517163150-646a0c3a1554", 400, 600, "Chinese couple holding double happiness symbols", "smiling-chinese-couple-holding-red-double-happiness-symbols-Qvqm9JRI3Lg"),
+  qipao: photo("photo-1596744743105-b1e229d13036", 400, 600, "Couple in red and gold Chinese wedding attire", "a-man-and-a-woman-in-red-and-gold-dress-standing-next-to-each-other-WoLrLWpuEew"),
+  stageDance: photo("photo-1617040289502-4a3a9fbb2538", 400, 267, "Bride and groom dancing on stage", "bride-and-groom-dancing-on-stage-B5PF6jJ1DXk"),
+  nikah: photo("photo-1775566416253-b1044819390c", 400, 600, "Bride and groom in traditional attire in a garden", "a-bride-and-groom-in-traditional-attire-1Wx0BY2ETZQ"),
 } satisfies Record<string, Photo>
 
 export type PhotoKey = keyof typeof photos

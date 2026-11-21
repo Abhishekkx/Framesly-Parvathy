@@ -13,6 +13,7 @@ import { useRef } from "react"
 import { RevealText } from "@/components/motion/reveal"
 import { EdgeLabel } from "@/components/ui/card"
 import { photos } from "@/lib/photos"
+import { cn } from "@/lib/utils"
 
 const tools = [
   { name: "Culling app", note: "Desktop only", x: -1, y: -1 },
@@ -34,8 +35,14 @@ export function OneUpload() {
   const progress = useTransform(mapped, (v) => (reduce ? 1 : v))
 
   return (
-    <section ref={ref} aria-label="The problem" className="relative h-[240vh]">
-      <div className="gutter sticky top-0 mx-auto flex h-dvh max-w-[var(--container-content)] flex-col justify-center gap-8 pt-16 md:grid md:grid-cols-12 md:items-center md:gap-12 md:pt-0">
+    <section ref={ref} aria-label="The problem" className={cn("relative", reduce ? "py-24" : "h-[240vh]")}>
+      <div
+        className={cn(
+          "gutter mx-auto flex max-w-[var(--container-content)] flex-col justify-center gap-8 pt-16 md:grid md:grid-cols-12 md:items-center md:gap-12",
+          // Reduced motion: no scroll-locked scene, just the end state in normal flow.
+          reduce ? "md:pt-0" : "sticky top-0 h-dvh md:pt-0"
+        )}
+      >
         <div className="md:col-span-5">
           <EdgeLabel tone="safelight">The problem</EdgeLabel>
           <RevealText
@@ -87,14 +94,20 @@ function Diagram({ progress }: { progress: MotionValue<number> }) {
       {/* The single file they collapse into */}
       <motion.div
         style={{ opacity: mergedOpacity, scale: mergedScale }}
-        className="theme-maroon absolute inset-[22%] flex flex-col justify-between rounded-[var(--radius-cover)] border-2 border-safelight p-5 shadow-[var(--shadow-print)]"
+        className="theme-maroon absolute inset-[20%] flex flex-col overflow-hidden rounded-[var(--radius-cover)] border-2 border-safelight shadow-[var(--shadow-print)]"
       >
-        <span className="type-label text-safelight-text">One file in storage</span>
-        <div>
-          <p className="type-heading-2">DSC_0412.JPG</p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
+        {/* The one original every step reads (fix list: card looked empty). */}
+        <div className="relative min-h-0 flex-1">
+          <Image src={photos.riverRock.src} alt="" fill sizes="300px" className="object-cover object-[50%_35%]" />
+          <span className="absolute top-2 left-2 rounded-[var(--radius-chip)] bg-safelight px-1.5 py-0.5 type-label text-[9px] text-on-safelight">
+            One file in storage
+          </span>
+        </div>
+        <div className="p-3 sm:p-4">
+          <p className="type-caption font-semibold sm:type-heading-2">DSC_0412.JPG</p>
+          <div className="mt-2 flex flex-wrap gap-1">
             {["Cull", "Gallery", "Download", "Prints"].map((s) => (
-              <span key={s} className="rounded-[var(--radius-chip)] bg-safelight-soft px-2 py-0.5 type-label text-safelight-text">
+              <span key={s} className="rounded-[var(--radius-chip)] bg-safelight-soft px-1.5 py-0.5 type-label text-[9px] text-safelight-text sm:text-[11px]">
                 {s}
               </span>
             ))}
@@ -104,6 +117,14 @@ function Diagram({ progress }: { progress: MotionValue<number> }) {
     </div>
   )
 }
+
+/** How each copy has drifted from the original in its tool. */
+const copyLook = [
+  { tilt: -5, filter: "none", crop: "50% 35%", label: "JPG" },
+  { tilt: 4, filter: "sepia(0.45) saturate(1.2)", crop: "46% 30%", label: "Edited" },
+  { tilt: 3, filter: "contrast(0.9) brightness(1.08)", crop: "54% 40%", label: "Web" },
+  { tilt: -4, filter: "grayscale(0.7) contrast(1.1)", crop: "50% 45%", label: "Print" },
+]
 
 function ToolBox({
   tool,
@@ -118,7 +139,10 @@ function ToolBox({
   const x = useTransform(progress, [0, 0.8], ["0%", `${-tool.x * 72}%`])
   const y = useTransform(progress, [0, 0.8], ["0%", `${-tool.y * 72}%`])
   const opacity = useTransform(progress, [0.55, 0.8], [1, 0])
-  const rotate = useTransform(progress, [0, 0.8], [tool.x * tool.y * -2, 0])
+  // Each copy rests at its own tilt and tint, so they read as four separate
+  // copies of one photo rather than a rendering glitch (fix list).
+  const rest = copyLook[index]
+  const rotate = useTransform(progress, [0, 0.8], [rest.tilt, 0])
 
   const pos = [
     "top-0 left-0",
@@ -134,9 +158,16 @@ function ToolBox({
     >
       {/* The same photo, copied into every tool */}
       <div className="relative min-h-0 flex-1">
-        <Image src={photos.riverRock.src} alt="" fill sizes="220px" className="object-cover object-[50%_35%]" />
+        <Image
+          src={photos.riverRock.src}
+          alt=""
+          fill
+          sizes="220px"
+          className="object-cover"
+          style={{ filter: rest.filter, objectPosition: rest.crop }}
+        />
         <span className="absolute top-2 left-2 rounded-[var(--radius-chip)] bg-[rgb(var(--scrim)/0.7)] px-1.5 py-0.5 type-label text-[9px] text-[#f3ece3]">
-          Copy {index + 1}
+          Copy {index + 1} · {rest.label}
         </span>
       </div>
       <div className="p-3 sm:p-4">

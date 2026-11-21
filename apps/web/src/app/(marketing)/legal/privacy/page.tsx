@@ -1,8 +1,12 @@
 import type { Metadata } from "next"
 
 import { ProsePage } from "@/components/site/prose-page"
+import { pageMeta } from "@/lib/site"
 
-export const metadata: Metadata = { title: "Privacy" }
+export const metadata: Metadata = {
+  ...pageMeta("/legal/privacy"),
+  title: "Privacy",
+}
 
 export default function PrivacyPage() {
   return (

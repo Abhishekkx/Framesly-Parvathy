@@ -12,7 +12,7 @@ import {
   useVelocity,
 } from "motion/react"
 import Image from "next/image"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
 import { RevealText } from "@/components/motion/reveal"
 import { EdgeLabel } from "@/components/ui/card"
@@ -23,23 +23,23 @@ type Item = { photo: Photo; label: string; frame: number }
 
 const rowA: Item[] = [
   { photo: photos.brideRed, label: "Haldi", frame: 112 },
-  { photo: photos.hennaHands, label: "Mehendi", frame: 287 },
+  { photo: photos.aisle, label: "The aisle", frame: 1204 },
   { photo: photos.dancingNight, label: "Sangeet", frame: 604 },
-  { photo: photos.riverRock, label: "Portraits", frame: 911 },
+  { photo: photos.yoruba, label: "Engagement", frame: 318 },
   { photo: photos.canopy, label: "Pheras", frame: 1288 },
-  { photo: photos.sherwani, label: "Ceremony", frame: 1402 },
-  { photo: photos.toast, label: "Toasts", frame: 1766 },
-  { photo: photos.brideGold, label: "Getting ready", frame: 64 },
+  { photo: photos.doubleHappiness, label: "Tea ceremony", frame: 742 },
+  { photo: photos.confettiChurch, label: "Confetti", frame: 1530 },
+  { photo: photos.nikah, label: "Nikah", frame: 1366 },
 ]
 const rowB: Item[] = [
-  { photo: photos.lifted, label: "Baraat", frame: 1012 },
-  { photo: photos.flowerCanopy, label: "Varmala", frame: 1190 },
-  { photo: photos.tableCandles, label: "Details", frame: 1544 },
+  { photo: photos.sparklers, label: "Sparkler exit", frame: 2101 },
+  { photo: photos.hennaHands, label: "Mehendi", frame: 287 },
+  { photo: photos.altar, label: "Vows", frame: 1250 },
+  { photo: photos.agbada, label: "Arrival", frame: 980 },
   { photo: photos.firstDance, label: "First dance", frame: 1873 },
-  { photo: photos.attire, label: "Trousseau", frame: 40 },
+  { photo: photos.maroonGown, label: "Getting ready", frame: 64 },
+  { photo: photos.qipao, label: "Portraits", frame: 911 },
   { photo: photos.sunsetKiss, label: "Send-off", frame: 2140 },
-  { photo: photos.ritual, label: "Rituals", frame: 1330 },
-  { photo: photos.archway, label: "Arrival", frame: 980 },
 ]
 
 /**
@@ -115,14 +115,8 @@ function Row({ items, baseSpeed, height }: { items: Item[]; baseSpeed: number; h
 }
 
 export function PhotoRibbon() {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 0)
-    return () => clearTimeout(t)
-  }, [])
-
   return (
-    <section aria-labelledby="ribbon-title" className="relative overflow-hidden py-24 md:py-32">
+    <section aria-labelledby="ribbon-title" className="relative overflow-hidden pt-24 pb-12 md:pt-32 md:pb-16">
       <div className="gutter mx-auto max-w-[var(--container-content)]">
         <div className="grid gap-6 md:grid-cols-12 md:items-end">
           <div className="md:col-span-7">
@@ -140,7 +134,7 @@ export function PhotoRibbon() {
         </div>
       </div>
 
-      <div className={`mt-14 space-y-6 transition-opacity duration-700 ${mounted ? "opacity-100" : "opacity-0"}`}>
+      <div className="mt-14 space-y-6">
         <Row items={rowA} baseSpeed={28} height="h-[150px] sm:h-[220px]" />
         <Row items={rowB} baseSpeed={-22} height="h-[120px] sm:h-[170px]" />
       </div>
