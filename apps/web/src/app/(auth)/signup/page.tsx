@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 
-import { AuthForm } from "@/components/auth/auth-form"
+import { SignupForm } from "@/components/auth/signup-form"
 import { pageMeta } from "@/lib/site"
 
 export const metadata: Metadata = {
@@ -9,5 +10,10 @@ export const metadata: Metadata = {
 }
 
 export default function SignupPage() {
-  return <AuthForm mode="signup" />
+  // Reads ?plan= from the pricing cards, so it renders inside a Suspense boundary.
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
+  )
 }

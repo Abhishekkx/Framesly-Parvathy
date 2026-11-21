@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <body style="margin:0;background:#f4efe6;font-family:Figtree,Helvetica,Arial,sans-serif;color:#1c1714">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#fffcf7;border:1px solid #dcd3c4;border-radius:16px;padding:32px">
+            <tr><td style="font-size:20px;font-weight:700;letter-spacing:-0.02em">Framesly</td></tr>
+            <tr><td style="padding-top:24px;font-size:24px;line-height:30px;font-weight:700">Reset your password</td></tr>
+            <tr><td style="padding-top:12px;font-size:15px;line-height:24px;color:#645a50">Use this link to choose a new password for {{ .Email }}. It works once and expires in an hour.</td></tr>
+            <tr>
+              <td style="padding-top:24px">
+                <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery"
+                   style="display:inline-block;background:#d18200;color:#1c1714;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:10px">Choose a new password</a>
+              </td>
+            </tr>
+            <tr><td style="padding-top:24px;font-size:13px;line-height:18px;color:#645a50">If you didn't ask to reset your password, ignore this email. Your password stays the same.</td></tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

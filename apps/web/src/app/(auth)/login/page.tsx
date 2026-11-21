@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 
-import { AuthForm } from "@/components/auth/auth-form"
+import { LoginForm } from "@/components/auth/login-form"
 import { pageMeta } from "@/lib/site"
 
 export const metadata: Metadata = {
@@ -9,5 +10,10 @@ export const metadata: Metadata = {
 }
 
 export default function LoginPage() {
-  return <AuthForm mode="login" />
+  // The form reads ?next= and ?error=, so it renders inside a Suspense boundary.
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  )
 }

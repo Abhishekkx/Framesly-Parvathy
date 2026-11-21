@@ -3,6 +3,7 @@
 import { motion } from "motion/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Suspense } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -22,12 +23,36 @@ const items = [
     label: "Studio",
     icon: <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM16 10l1.5-.8-1-2.4-1.7.4-1-1-.4-1.7-2.4-1L10 4l-.8-1.5-2.4 1 .4 1.7-1 1-1.7-.4-1 2.4L4 10l-1.5.8 1 2.4 1.7-.4 1 1-.4 1.7 2.4 1L10 16l.8 1.5 2.4-1-.4-1.7 1-1 1.7.4 1-2.4Z" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />,
   },
+  {
+    href: "/app/settings/profile",
+    label: "Profile",
+    icon: <path d="M10 10a3.2 3.2 0 1 0 0-6.4A3.2 3.2 0 0 0 10 10Zm-6 6.5c.7-2.8 3.1-4.5 6-4.5s5.3 1.7 6 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />,
+  },
 ]
 
-/** App navigation: sidebar on desktop, bottom tab bar on phones (FR-08). */
-export function AppNav({ variant }: { variant: "sidebar" | "tabs" }) {
-  const pathname = usePathname()
-  const isActive = (href: string) => (href === "/app" ? pathname === "/app" : pathname.startsWith(href))
+type Variant = "sidebar" | "tabs"
+
+/**
+ * App navigation: sidebar on desktop, bottom tab bar on phones (FR-08).
+ * The links are part of the static shell; the active highlight needs the URL
+ * (runtime data), so it streams in under Suspense with no layout shift.
+ */
+export function AppNav({ variant }: { variant: Variant }) {
+  return (
+    <Suspense fallback={<NavLinks variant={variant} pathname={null} />}>
+      <ActiveNav variant={variant} />
+    </Suspense>
+  )
+}
+
+function ActiveNav({ variant }: { variant: Variant }) {
+  return <NavLinks variant={variant} pathname={usePathname()} />
+}
+
+function NavLinks({ variant, pathname }: { variant: Variant; pathname: string | null }) {
+  const isActive = (href: string) =>
+    pathname !== null &&
+    (href === "/app" ? pathname === "/app" || pathname.startsWith("/app/galleries") : pathname.startsWith(href))
 
   if (variant === "sidebar") {
     return (

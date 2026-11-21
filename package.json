@@ -12,6 +12,7 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
+    "supabase": "^3.2.0",
     "turbo": "^2.5.0"
   }
 }

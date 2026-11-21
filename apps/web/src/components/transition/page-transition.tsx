@@ -9,6 +9,7 @@ import {
   useContext,
   useEffect,
   useRef,
+  Suspense,
   useState,
   type ComponentProps,
   type MouseEvent,
@@ -55,22 +56,12 @@ const curtain = [0.76, 0, 0.24, 1] as const
  */
 export function PageTransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const pathname = usePathname()
   const reduce = useReducedMotion() ?? false
   const [state, setState] = useState<State>({ phase: "idle", x: 0, y: 0, label: "", target: "" })
   const hrefRef = useRef("")
 
-  // When the route we are heading to has committed, start the reveal.
-  // Checked after commit (not during render): navigation renders can be
-  // prepared and discarded before the new page actually lands.
-  useEffect(() => {
-    if (state.phase !== "wait" || pathname !== state.target) return
-    // Give the new page one frame to paint before lifting the curtain.
-    const raf = requestAnimationFrame(() => {
-      setState((s) => (s.phase === "wait" ? { ...s, phase: "reveal" } : s))
-    })
-    return () => cancelAnimationFrame(raf)
-  }, [pathname, state.phase, state.target])
+  // The new route has committed: give it one frame to paint, then lift the curtain.
+  const onArrive = useCallback(() => setState((s) => (s.phase === "wait" ? { ...s, phase: "reveal" } : s)), [])
 
   const navigate = useCallback<Navigate>(
     (href, origin, label) => {
@@ -124,6 +115,12 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
   return (
     <TransitionContext.Provider value={navigate}>
       {children}
+      {state.phase === "wait" && (
+        // Reading the URL is runtime data; inside Suspense it doesn't block prerendering.
+        <Suspense fallback={null}>
+          <ArrivalWatcher target={state.target} onArrive={onArrive} />
+        </Suspense>
+      )}
       {phase !== "idle" && (
         <motion.div
           data-pt-overlay
@@ -167,6 +164,21 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       )}
     </TransitionContext.Provider>
   )
+}
+
+/**
+ * Fires once the route we are heading to has committed. Checked after commit
+ * (not during render): navigation renders can be prepared and discarded
+ * before the new page actually lands.
+ */
+function ArrivalWatcher({ target, onArrive }: { target: string; onArrive: () => void }) {
+  const pathname = usePathname()
+  useEffect(() => {
+    if (pathname !== target) return
+    const raf = requestAnimationFrame(onArrive)
+    return () => cancelAnimationFrame(raf)
+  }, [pathname, target, onArrive])
+  return null
 }
 
 export function usePageTransition() {

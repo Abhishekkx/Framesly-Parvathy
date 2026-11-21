@@ -1,62 +1,77 @@
 import type { Metadata } from "next"
 
-import { Reveal } from "@/components/motion/reveal"
-import { Card, EdgeLabel } from "@/components/ui/card"
+import { GalleryCard } from "@/components/app/gallery-card"
+import { NewGalleryDialog } from "@/components/app/new-gallery-dialog"
 import { Viewfinder } from "@/components/ui/viewfinder"
+import { requireStudio } from "@/lib/auth/dal"
+import { listGalleries } from "@/lib/data/galleries"
 
 export const metadata: Metadata = { title: "Galleries" }
 
-const metrics = [
-  { label: "Galleries", value: "0" },
-  { label: "Photos", value: "0" },
-  { label: "Storage used", value: "0 GB" },
-]
+/** Dashboard home: the studio's galleries, newest first (FR-08). */
+export default async function GalleriesPage({ searchParams }: PageProps<"/app">) {
+  const [{ studio, user }, params] = await Promise.all([requireStudio(), searchParams])
+  const galleries = await listGalleries(studio.id)
+  const welcome = params.welcome === "1"
+  const totals = galleries.reduce(
+    (t, g) => ({ photos: t.photos + g.photo_count, delivered: t.delivered + (g.status === "delivered" ? 1 : 0) }),
+    { photos: 0, delivered: 0 }
+  )
+  const firstName = user.fullName.split(" ")[0]
 
-/**
- * Galleries dashboard (FR-08), empty state for now. Real data arrives once
- * Supabase (FR-02) and the create-gallery flow (FR-08) are built.
- */
-export default function GalleriesPage() {
   return (
     <div className="mx-auto max-w-[var(--container-content)]">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <EdgeLabel tone="safelight">Your studio</EdgeLabel>
-          <h1 className="mt-2 type-heading-1 md:type-display-l">Galleries</h1>
+      {welcome && (
+        <div role="status" className="mb-8 flex items-start gap-3 rounded-[var(--radius-control)] border border-safelight/40 bg-safelight-soft px-4 py-3">
+          <span aria-hidden className="mt-1.5 size-2 shrink-0 rounded-full bg-safelight" />
+          <p className="text-ink">
+            {studio.name} is set up{firstName ? `, ${firstName}` : ""}. Create your first gallery to start uploading.
+          </p>
         </div>
-        <button
-          type="button"
-          disabled
-          title="Creating galleries arrives with Week 1 (FR-08)"
-          className="inline-flex h-11 items-center gap-2 rounded-[var(--radius-control)] bg-safelight px-5 font-semibold text-on-safelight disabled:opacity-60"
-        >
-          New gallery
-        </button>
+      )}
+      {params.deleted === "1" && <p role="status" className="mb-6 type-caption font-normal text-ink-muted">Gallery deleted.</p>}
+
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h1 className="type-heading-1 md:type-display-l">Galleries</h1>
+        {galleries.length > 0 && <NewGalleryDialog />}
       </div>
 
       <dl className="mt-8 grid grid-cols-3 gap-3">
-        {metrics.map((m) => (
+        {[
+          { label: "Galleries", value: galleries.length },
+          { label: "Photos", value: totals.photos },
+          { label: "Delivered", value: totals.delivered },
+        ].map((m) => (
           <div key={m.label} className="rounded-[var(--radius-control)] border border-line bg-surface-raised p-4">
-            <dt className="type-label text-ink-muted">{m.label}</dt>
-            <dd className="mt-2 type-metric text-[20px] leading-7 text-ink">{m.value}</dd>
+            <dt className="type-caption font-normal text-ink-muted">{m.label}</dt>
+            <dd className="mt-1 type-metric text-[22px] leading-8 text-ink">{m.value.toLocaleString("en")}</dd>
           </div>
         ))}
       </dl>
 
-      <Reveal className="mt-8">
-        <Card className="grain relative flex flex-col items-center px-6 py-16 text-center" focusFrame={false}>
+      {galleries.length === 0 ? (
+        <section className="grain relative mt-8 flex flex-col items-center rounded-[var(--radius-cover)] border border-line bg-surface-raised px-6 py-16 text-center" aria-labelledby="empty-title">
           <div className="relative grid size-24 place-items-center">
             <Viewfinder size={18} />
-            <span className="size-3 rounded-full bg-safelight shadow-[0_0_30px_10px_rgb(242_169_59/0.25)]" />
+            <span className="size-3 rounded-full" style={{ background: studio.brand_color, boxShadow: `0 0 30px 10px ${studio.brand_color}40` }} />
           </div>
-          <h2 className="mt-8 type-heading-1">Create your first gallery</h2>
+          <h2 id="empty-title" className="mt-8 type-heading-1">Create your first gallery</h2>
           <p className="mt-3 max-w-md text-ink-muted">
-            Name the wedding, pick the events (Haldi, Sangeet, Ceremony, Reception or your own), then
-            drop in every card from every shooter.
+            Name the wedding and choose its events. Then drop in every card from every shooter.
           </p>
-          <p className="mt-6 type-label text-ink-muted">Gallery creation arrives with Week 1</p>
-        </Card>
-      </Reveal>
+          <div className="mt-8">
+            <NewGalleryDialog label="Create a gallery" />
+          </div>
+        </section>
+      ) : (
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {galleries.map((g) => (
+            <li key={g.id}>
+              <GalleryCard gallery={g} brandColor={studio.brand_color} />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

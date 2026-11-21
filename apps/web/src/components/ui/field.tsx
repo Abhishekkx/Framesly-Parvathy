@@ -11,9 +11,17 @@ export function Field({
   hint,
   error,
   prefix,
+  suffix,
   className,
   ...props
-}: ComponentProps<"input"> & { label: string; hint?: ReactNode; error?: string | null; prefix?: string }) {
+}: ComponentProps<"input"> & {
+  label: string
+  hint?: ReactNode
+  error?: string | null
+  prefix?: string
+  /** Trailing control inside the field, e.g. a show-password button. */
+  suffix?: ReactNode
+}) {
   const id = useId()
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined
   return (
@@ -39,6 +47,7 @@ export function Field({
           )}
           {...props}
         />
+        {suffix}
       </div>
       {error ? (
         <p id={`${id}-error`} className="mt-2 type-caption text-danger">

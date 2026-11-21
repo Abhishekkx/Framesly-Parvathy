@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from "motion/react"
-import { usePathname } from "next/navigation"
 import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore } from "react"
 
 import { cn } from "@/lib/utils"
@@ -20,7 +19,8 @@ const KEY = "framesly-theme"
 const EVENT = "framesly-theme-change"
 const META = { light: "#f4efe6", dark: "#121417" } as const
 
-const isAppPath = (p: string) => p === "/app" || p.startsWith("/app/")
+/** Which part of the product a page belongs to. Set by each route group's layout. */
+export type ThemeAreaName = "site" | "app"
 
 /**
  * Runs in <head> before first paint so the page never flashes the wrong
@@ -28,9 +28,9 @@ const isAppPath = (p: string) => p === "/app" || p.startsWith("/app/")
  */
 export const themeScript = `(function(){try{var p=null;try{p=localStorage.getItem("${KEY}")}catch(e){}var l=location.pathname,a=l==="/app"||l.indexOf("/app/")===0;var t=p==="light"||p==="dark"?p:a?"dark":"light";var d=document.documentElement;d.setAttribute("data-theme",t);d.style.colorScheme=t}catch(e){}})()`
 
-function resolveTheme(pref: Pref, pathname: string): Theme {
+function resolveTheme(pref: Pref, area: ThemeAreaName): Theme {
   if (pref === "light" || pref === "dark") return pref
-  return isAppPath(pathname) ? "dark" : "light"
+  return area === "app" ? "dark" : "light"
 }
 
 /* Preference store: localStorage + same-tab event + cross-tab storage event. */
@@ -59,21 +59,19 @@ function applyTheme(theme: Theme) {
 }
 
 type Ctx = {
-  theme: Theme
   pref: Pref
   setTheme: (t: Theme, origin?: { x: number; y: number }) => void
 }
 const ThemeContext = createContext<Ctx | null>(null)
+const AreaContext = createContext<ThemeAreaName>("site")
 
+/**
+ * Holds the saved preference. It does not read the URL: reading it at the
+ * root would make every dynamic route block prerendering (Cache Components).
+ * The site/app default comes from <ThemeArea> in each route group's layout.
+ */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
   const pref = useSyncExternalStore(subscribe, readPref, () => "auto" as Pref)
-  const theme = resolveTheme(pref, pathname)
-
-  // Keep <html> in step with route changes (site ↔ app) and preference changes.
-  useEffect(() => {
-    if (document.documentElement.getAttribute("data-theme") !== theme) applyTheme(theme)
-  }, [theme])
 
   const setTheme = useCallback((next: Theme, origin?: { x: number; y: number }) => {
     const commit = () => {
@@ -99,14 +97,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     t.finished.finally(() => d.removeAttribute("data-theme-switching"))
   }, [])
 
-  const value = useMemo(() => ({ theme, pref, setTheme }), [theme, pref, setTheme])
+  const value = useMemo(() => ({ pref, setTheme }), [pref, setTheme])
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+}
+
+/**
+ * Marks a part of the product: the public site defaults to light, the app to
+ * Darkroom. Keeps <html> in step when navigating between areas or when the
+ * preference changes.
+ */
+export function ThemeArea({ area, children }: { area: ThemeAreaName; children: React.ReactNode }) {
+  const pref = useContext(ThemeContext)?.pref ?? "auto"
+  const theme = resolveTheme(pref, area)
+  useEffect(() => {
+    if (document.documentElement.getAttribute("data-theme") !== theme) applyTheme(theme)
+  }, [theme])
+  return <AreaContext.Provider value={area}>{children}</AreaContext.Provider>
 }
 
 export function useTheme() {
   const ctx = useContext(ThemeContext)
+  const area = useContext(AreaContext)
   if (!ctx) throw new Error("useTheme must be used inside ThemeProvider")
-  return ctx
+  return { theme: resolveTheme(ctx.pref, area), pref: ctx.pref, setTheme: ctx.setTheme }
 }
 
 const SunIcon = () => (
